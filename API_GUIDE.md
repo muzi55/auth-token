@@ -187,8 +187,8 @@ Authorization: Bearer {accessToken}
 
 ## 토큰 정보
 
-- **Access Token**: 15분 유효
-- **Refresh Token**: 7일 유효
+- **Access Token**: 29초 유효
+- **Refresh Token**: 2분 유효
 
 Access Token이 만료되면 Refresh Token으로 새로운 토큰을 발급받을 수 있습니다.
 
