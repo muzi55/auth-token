@@ -1,0 +1,57 @@
+### 회원가입
+POST http://localhost:3000/auth/signup
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123",
+  "name": "테스트유저"
+}
+
+###
+
+### 로그인
+POST http://localhost:3000/auth/signin
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+###
+
+### 토큰 갱신 (Refresh Token 필요)
+POST http://localhost:3000/auth/refresh
+Authorization: Bearer YOUR_REFRESH_TOKEN_HERE
+
+###
+
+### 로그아웃 (Access Token 필요)
+POST http://localhost:3000/auth/logout
+Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
+
+###
+
+### 포스트 작성 (Access Token 필요)
+POST http://localhost:3000/posts
+Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "title": "첫 번째 포스트",
+  "content": "포스트 내용입니다."
+}
+
+###
+
+### 모든 포스트 조회
+GET http://localhost:3000/posts
+
+###
+
+### 내 포스트 조회 (Access Token 필요)
+GET http://localhost:3000/posts/my-posts
+Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
+
+###
