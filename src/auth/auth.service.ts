@@ -69,15 +69,20 @@ export class AuthService {
       throw new UnauthorizedException('접근이 거부되었습니다.');
     }
 
-    const isValid = await this.usersService.validateRefreshToken(
+    // 리프레시 토큰 검증 및 무효화
+    const isValid = await this.usersService.validateAndInvalidateRefreshToken(
       userId,
       refreshToken,
     );
     if (!isValid) {
-      throw new UnauthorizedException('유효하지 않은 리프레시 토큰입니다.');
+      throw new UnauthorizedException(
+        '유효하지 않거나 이미 사용된 리프레시 토큰입니다.',
+      );
     }
 
+    // 새로운 토큰 생성
     const tokens = await this.generateTokens(user.id, user.email);
+    // 새로운 리프레시 토큰을 DB에 저장 (이전 토큰은 자동으로 무효화됨)
     await this.usersService.updateRefreshToken(user.id, tokens.refreshToken);
 
     return tokens;

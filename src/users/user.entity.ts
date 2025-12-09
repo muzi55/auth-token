@@ -24,6 +24,9 @@ export class User {
   @Column({ nullable: true })
   refreshToken?: string;
 
+  @Column({ nullable: true })
+  refreshTokenVersion?: number; // 리프레시 토큰 버전 관리
+
   @CreateDateColumn()
   createdAt: Date;
 

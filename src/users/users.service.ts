@@ -24,6 +24,7 @@ export class UsersService {
       email,
       password: hashedPassword,
       name,
+      refreshTokenVersion: 0, // 초기 버전 0으로 설정
     });
 
     return this.usersRepository.save(user);
@@ -41,11 +42,21 @@ export class UsersService {
     userId: number,
     refreshToken: string | null,
   ): Promise<void> {
+    const user = await this.findById(userId);
+    if (!user) return;
+
     const hashedRefreshToken = refreshToken
       ? await bcrypt.hash(refreshToken, 10)
       : undefined;
+
+    // 새로운 refresh token이 발급될 때마다 버전을 증가시킴
+    const newVersion = refreshToken
+      ? (user.refreshTokenVersion || 0) + 1
+      : user.refreshTokenVersion;
+
     await this.usersRepository.update(userId, {
       refreshToken: hashedRefreshToken,
+      refreshTokenVersion: newVersion,
     });
   }
 
@@ -57,6 +68,39 @@ export class UsersService {
     if (!user || !user.refreshToken) {
       return false;
     }
-    return bcrypt.compare(refreshToken, user.refreshToken);
+    
+    // 저장된 해시와 비교
+    const isValid = await bcrypt.compare(refreshToken, user.refreshToken);
+    
+    if (!isValid) {
+      return false;
+    }
+
+    return true;
+  }
+
+  // 이미 사용된 refresh token인지 확인하고 무효화하는 메서드
+  async validateAndInvalidateRefreshToken(
+    userId: number,
+    refreshToken: string,
+  ): Promise<boolean> {
+    const user = await this.findById(userId);
+    if (!user || !user.refreshToken) {
+      return false;
+    }
+
+    // 저장된 해시와 비교
+    const isValid = await bcrypt.compare(refreshToken, user.refreshToken);
+
+    if (!isValid) {
+      // 만약 토큰이 유효하지 않다면, 재사용 시도로 간주하고 모든 refresh token 무효화
+      await this.usersRepository.update(userId, {
+        refreshToken: undefined,
+        refreshTokenVersion: (user.refreshTokenVersion || 0) + 1,
+      });
+      return false;
+    }
+
+    return true;
   }
 }
