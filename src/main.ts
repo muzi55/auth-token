@@ -11,7 +11,7 @@ async function bootstrap() {
 
   // CORS 설정 - 프론트엔드(localhost:3000)와 통신을 위한 설정
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: [process.env.FRONTEND_URL, 'http://localhost:3000'],
     credentials: true, // 쿠키를 주고받기 위해 필요
   });
 
