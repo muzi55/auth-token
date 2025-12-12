@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -29,5 +30,11 @@ export class PostsController {
   @UseGuards(JwtAuthGuard)
   async findMyPosts(@Request() req) {
     return this.postsService.findByUserId(req.user.userId);
+  }
+
+  @Get('random')
+  async findRandomPosts(@Query('limit') limit?: string) {
+    const limitNumber = limit ? parseInt(limit, 10) : 5;
+    return this.postsService.findRandomPosts(limitNumber);
   }
 }

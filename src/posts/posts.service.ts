@@ -45,4 +45,21 @@ export class PostsService {
       },
     });
   }
+
+  async findRandomPosts(limit: number = 5): Promise<Post[]> {
+    return this.postsRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.user', 'user')
+      .select([
+        'post.id',
+        'post.title',
+        'post.content',
+        'user.id',
+        'user.email',
+        'user.name',
+      ])
+      .orderBy('RANDOM()')
+      .take(limit)
+      .getMany();
+  }
 }
