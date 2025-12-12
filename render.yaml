@@ -1,0 +1,20 @@
+# 2025년 12월 12일
+# render.yaml - Render.com 배포 설정 파일
+
+services:
+  - type: web
+    name: auth-token-api
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: http://localhost:3000
